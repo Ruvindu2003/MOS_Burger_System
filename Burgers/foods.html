@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOS Burgers - Food Items</title>
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="hero">
+            <div class="hero-content">
+                <h1 id="category-name">Food Items</h1>
+                <p>AT THE BEST PRICE</p>
+                <p class="details">Choose your favorite items from the selected category below.</p>
+            </div>
+        </div>
+    </header>
+
+    <section id="menu">
+        <h2>Items in This Category</h2>
+        <div class="burger-grid" id="food-container">
+            <!-- Food items will be rendered dynamically here -->
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <div class="cart" id="cart">
+        <div class="cart-header">
+
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Render cart items here -->
+        </div>
+        <div class="cart-footer">
+            <div class="subtotal" id="subtotal"></div>
+            <div class="checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 MOS Burgers</p>
+    </footer>
+
+    <script src="JS/foods.js"></script>
+    <script src="JS/displayfoods.js"></script>
+    <script src="JS/cart.js"></script>
+</body>
+
+</html>

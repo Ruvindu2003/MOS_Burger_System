@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <title>Checkout Report</title>
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="hero">
+            <div class="hero-content">
+                <h1>CHEESY BURGERS SHOP</h1>
+                <p>AT THE BEST PRICE</p>
+                <p class="details">510 Cal | Each Quarter Pounder with Cheese burger features a 1/4 lb. 100% fresh beef
+                    patty, cooked when you order it. It's seasoned with a pinch of salt and pepper, sizzled on a flat
+                    iron grill, then topped with slivered onions.</p>
+                <a href="#menu" class="shop-btn">SHOP NOW</a>
+            </div>
+        </div>
+    </header>
+    <h1>Thank you & Come again</h1>
+    <table id="checkoutTable">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="checkoutBody">
+            <!-- Item rows will be dynamically inserted here -->
+        </tbody>
+    </table>
+    <div class="subtotal">
+        <strong>Subtotal:</strong> $<span id="subtotal"></span>
+    </div>
+    <button onclick="confirmCheckout()" class="btn btn-danger">Confirm Order</button>
+
+
+    <script src="JS/cart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</body>
+
+</html>
