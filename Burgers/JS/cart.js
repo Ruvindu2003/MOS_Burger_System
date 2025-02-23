@@ -7,6 +7,7 @@ function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
 }
 
+
 // Add an item to the cart
 function addToCart(categoryId, itemId) {
     console.log(`Attempting to add item: categoryId=${categoryId}, itemId=${itemId}`);
@@ -183,6 +184,21 @@ function generateCheckoutReport() {
 
     // Clear existing rows if any
     checkoutBody.innerHTML = '';
+    fetch('http://localhost:8080/Order//getAll')
+    .then(response => response.json())
+    .then(data => {
+        console.log('Fetched orders:', data);
+        data.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.name}</td>
+                <td>${order.qty}</td>
+                <td>$${order.unitPrice.toFixed(2)}</td>
+                <td>$${order.total.toFixed(2)}</td>
+            `;
+            checkoutBody.appendChild(row);
+        });
+    });
 
     console.log('Starting to render items...');
     cartItems.forEach(item => {
@@ -190,14 +206,24 @@ function generateCheckoutReport() {
         subtotal += total;
 
         console.log(`Rendering item: ${item.name}, Quantity: ${item.quantity}, Unit Price: ${item.price}, Total: ${total}`);
-
+        fetch('http://localhost:8080/Order//getAll')
+        .then(response => response.json())          
+        .then(data => {
+            console.log('Fetched orders:', data);
+            data.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${order.qty}</td>
+                    <td>$${order.unitPrice.toFixed(2)}</td>
+                    <td>$${order.total.toFixed(2)}</td>
+                `;
+                checkoutBody.appendChild(row);
+            });
+        });
+       
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${item.name}</td>
-            <td>${item.quantity}</td>
-            <td>$${item.price.toFixed(2)}</td>
-            <td>$${total.toFixed(2)}</td>
-        `;
+        
         checkoutBody.appendChild(row);
     });
 
