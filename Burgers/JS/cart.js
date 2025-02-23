@@ -9,28 +9,6 @@ function saveCart() {
 
 // Add an item to the cart
 function addToCart(categoryId, itemId) {
-    fetch("http://localhost:8080/Order/getAll")
-    .then(response => response.json())      
-    .then(data =>{console.log(data);}) 
-    .then(data => {
-        console.log(data);
-        data.forEach(item => {
-            const total = item.price * item.quantity;
-            subtotal += total;
-    
-            console.log(`Rendering item: ${item.name}, Quantity: ${item.quantity}, Unit Price: ${item.price}, Total: ${total}`);
-    
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.id}</td>
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>$${item.price.toFixed(2)}</td>
-                <td>$${total.toFixed(2)}</td>
-            `;
-            checkoutBody.appendChild(row);
-        });
-    });
     console.log(`Attempting to add item: categoryId=${categoryId}, itemId=${itemId}`);
 
     const category = foods.find(food => food.id === categoryId);
@@ -59,13 +37,73 @@ function addToCart(categoryId, itemId) {
     }
     saveCart(); // Save the updated cart to localStorage
     renderCart(); // Render the updated cart
+
+    // Send the updated cart to the backend
+    sendOrderToBackend(item, existingItem);
 }
+
+
+    console.log('Payload:', payload);
+
+    function sendOrderToBackend(item, existingItem) {
+        const payload = {
+            id: item.id,
+            name: item.name,
+            qty: existingItem ? existingItem.quantity : 1,
+            unitPrice: item.price,
+            total: (existingItem ? existingItem.quantity : 1) * item.price
+        };
+    
+        console.log('Payload:', payload);
+    
+        fetch("http://localhost:8080/Order/Order-add", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+            
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Successfully sent order to backend:', data);
+        })
+        .catch(error => {
+            console.error('Error sending order to backend:', error.message || error);
+        });
+    }
 
 // Remove an item from the cart
 function removeItemFromCart(categoryId, itemId) {
+    
+    console.log(`Attempting to remove item: categoryId=${categoryId}, itemId=${itemId}`);
     cart = cart.filter(cartItem => !(cartItem.id === itemId && cartItem.categoryId === categoryId));
+
     saveCart();
     renderCart();
+
+    // Send delete request to backend
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({});
+
+    const requestOptions = {
+        method: "DELETE",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+    };
+
+    fetch(`http://localhost:8080/Order-Delete/${itemId}`, requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
 }
 
 // Update the quantity of an item in the cart
@@ -145,27 +183,7 @@ function generateCheckoutReport() {
 
     // Clear existing rows if any
     checkoutBody.innerHTML = '';
-    fetch("http://localhost:8080/Order/getAll")
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        data.forEach(item => {
-            const total = item.price * item.quantity;
-            subtotal += total;
-    
-            console.log(`Rendering item: ${item.name}, Quantity: ${item.quantity}, Unit Price: ${item.price}, Total: ${total}`);
-    
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                td>${item.id}</td>
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>$${item.price.toFixed(2)}</td>
-                <td>$${total.toFixed(2)}</td>
-            `;
-            checkoutBody.appendChild(row);
-        });
-    });
+
     console.log('Starting to render items...');
     cartItems.forEach(item => {
         const total = item.price * item.quantity;
@@ -175,7 +193,6 @@ function generateCheckoutReport() {
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${item.id}</td>
             <td>${item.name}</td>
             <td>${item.quantity}</td>
             <td>$${item.price.toFixed(2)}</td>
@@ -186,16 +203,16 @@ function generateCheckoutReport() {
 
     subtotalElement.textContent = subtotal.toFixed(2);
     console.log('Subtotal:', subtotal);
-    }
+}
 
-    // Confirm checkout
-    function confirmCheckout() {
-        if (confirm("Are you sure you want to complete the checkout?")) {
-            // Clear the cart only after confirmation
-            localStorage.removeItem('cart'); 
-            window.location.href = 'orderConfirmation.html'; // Redirect to order confirmation page
-        }
+// Confirm checkout
+function confirmCheckout() {
+    if (confirm("Are you sure you want to complete the checkout?")) {
+        // Clear the cart only after confirmation
+        localStorage.removeItem('cart'); 
+        window.location.href = 'orderConfirmation.html'; // Redirect to order confirmation page
     }
+}
 
 // Load checkout report when `checkout.html` loads
 document.addEventListener('DOMContentLoaded', function() {
